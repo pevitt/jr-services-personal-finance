@@ -1,0 +1,51 @@
+services:
+  personal_finance_db:
+    image: postgres:16
+    volumes:
+      - personal_finance_db:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=personal_finance
+    ports:
+      - 5434:5432
+
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: personal_finance_celery
+    container_name: personal_finance_celery
+    volumes:
+      - .:/app
+    depends_on:
+      - personal_finance_db
+      - redis
+    command: celery -A core worker -B -l info
+
+  web:
+    tty: true
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: personal_finance_web
+    container_name: personal_finance_container
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - personal_finance_db
+      - redis
+    command: python manage.py runserver 0.0.0.0:8000
+
+volumes:
+  personal_finance_db:
