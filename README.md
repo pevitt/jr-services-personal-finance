@@ -26,6 +26,43 @@
    pip install -r requirements.txt
    ```
 
+## API Key Management
+
+### Generate API Key
+To create a new API Key for automated agents (e.g., AI reading emails/SMS):
+
+```bash
+# Using Docker
+docker compose exec web python manage.py create_api_key "Finance Agent"
+
+# Or locally (if not using Docker)
+python manage.py create_api_key "Finance Agent"
+```
+
+**Important:** Save the generated API Key immediately as it won't be shown again for security reasons.
+
+### View API Key Information
+To see information about the current API Key:
+
+```bash
+# Using Docker
+docker compose exec web python manage.py show_api_key
+
+# Or locally (if not using Docker)
+python manage.py show_api_key
+```
+
+**Note:** The full API Key is not stored for security reasons. Only the prefix and metadata are shown.
+
+### Using API Key in Requests
+Include the API Key in your HTTP headers:
+
+```bash
+curl -H "Authorization: Api-Key YOUR_API_KEY_HERE" \
+     -H "Content-Type: application/json" \
+     -X POST http://localhost:8000/api/your-endpoint/
+```
+
 ## Definition Summary
 
 A web API for users to manage their personal finances, register incomes and expenses, and receive budget and savings recommendations, with support for both manual and automated (API Key) data entry.
