@@ -23,6 +23,9 @@ services:
       dockerfile: Dockerfile.dev
     image: personal_finance_celery
     container_name: personal_finance_celery
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
       - .:/app
     depends_on:

@@ -10,3 +10,4 @@ redis==5.0.4
 pdbpp==0.10.3
 fancycompleter==0.9.1
 djangorestframework-simplejwt==5.3.1
+djangorestframework-api-key==3.1.0

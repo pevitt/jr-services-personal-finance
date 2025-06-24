@@ -49,3 +49,6 @@ reset-db:
 
 dump-data:
 	docker compose run web python manage.py dumpdata --indent 4 -o ${output} ${model}
+
+docker-exec-web:
+	docker compose exec web bash
