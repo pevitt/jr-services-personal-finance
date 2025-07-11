@@ -15,7 +15,11 @@ class ErrorCode(Enum):
         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
 
-    U01 = dict(code="U01", message="User not found", status=status.HTTP_404_NOT_FOUND)
+    U01 = dict(
+        code="U01", 
+        message="User not found", 
+        status=status.HTTP_404_NOT_FOUND
+    )
 
     U02 = dict(
         code="U02",
@@ -25,6 +29,18 @@ class ErrorCode(Enum):
 
     U03 = dict(
         code="U03", message="Invalid credentials", status=status.HTTP_401_UNAUTHORIZED
+    )
+
+    C00 = dict(
+        code="C00",
+        message="Error while creating category",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+    C01 = dict(
+        code="C01",
+        message="Category already exists",
+        status=status.HTTP_400_BAD_REQUEST,
     )
 
     @classmethod
