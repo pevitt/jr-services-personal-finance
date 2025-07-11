@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_apps.finance",
+    "django_apps.transactions",
     "django_apps.authentication",
     "rest_framework_api_key",
 ]
