@@ -38,6 +38,12 @@ class BaseService(ABC):
     def get_all(cls) -> List[models.Model]:
         """Obtener todos los registros"""
         pass
+
+    @classmethod
+    @abstractmethod
+    def get_by_filters(cls, **filters) -> List[models.Model]:
+        """Obtener registros por filtros"""
+        pass
     
     @classmethod
     def validate_data(cls, data: Dict) -> bool:
