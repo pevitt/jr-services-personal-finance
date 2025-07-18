@@ -21,3 +21,13 @@ class CategorySelector(BaseSelector):
     @classmethod
     def get_by_id(cls, id: str) -> Model:
         return cls.model.objects.filter(id=id).first()
+    
+    @classmethod
+    def update(cls, id: str, **kwargs) -> Model:
+        category = cls.get_by_id(id)
+        if not category:
+            return None
+        for key, value in kwargs.items():
+            setattr(category, key, value)
+        category.save()
+        return category

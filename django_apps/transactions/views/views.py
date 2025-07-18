@@ -3,12 +3,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from utils.exceptions import FinanceAPIException, ErrorCode
+from utils.mixins import ResponseMixin
 from rest_framework import serializers
 from django_apps.transactions.models import Category, Transaction
 from django_apps.transactions.services import CategoryService
 
 # Create your views here.
-class CategoryView(APIView):
+class CategoryView(ResponseMixin, APIView):
     authentication_classes = []  # Sin autenticación
     permission_classes = [] 
 
@@ -63,7 +64,7 @@ class CategoryView(APIView):
             status=status.HTTP_200_OK
         )
     
-class CategoryDetailView(APIView):
+class CategoryDetailView(ResponseMixin, APIView):
     authentication_classes = []  # Sin autenticación
     permission_classes = [] 
 
@@ -71,6 +72,16 @@ class CategoryDetailView(APIView):
         class Meta:
             model = Category
             fields = ['id', 'name', 'type', 'description']
+
+    class CategoryUpdateInputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Category
+            fields = ['name', 'type', 'description']
+            extra_kwargs = {
+                'name': {'required': False},
+                'type': {'required': False},
+                'description': {'required': False}
+            }
 
     def get(self, request, category_id):
         category = CategoryService.get_by_id(category_id)
@@ -80,6 +91,30 @@ class CategoryDetailView(APIView):
             )
         try:
             out_serializer = self.CategoryDetailOutputSerializer(category)
+        except Exception as e:
+            raise FinanceAPIException(
+                error_code=ErrorCode.C02.value
+            )
+        return Response(
+            data=out_serializer.data, 
+            status=status.HTTP_200_OK
+        )
+    
+    def put(self, request, category_id):
+        category = CategoryService.get_by_id(category_id)
+        if not category:
+            raise FinanceAPIException(
+                error_code=ErrorCode.C03.value
+            )
+        update_serializer = self.CategoryUpdateInputSerializer(
+            instance=category,
+            data=request.data,
+            partial=True
+        )
+        update_serializer.is_valid(raise_exception=True)
+        data = CategoryService.update(category_id, **update_serializer.validated_data)
+        try:
+            out_serializer = self.CategoryDetailOutputSerializer(data)
         except Exception as e:
             raise FinanceAPIException(
                 error_code=ErrorCode.C02.value

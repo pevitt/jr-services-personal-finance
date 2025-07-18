@@ -25,3 +25,7 @@ class CategoryService(BaseService):
     @classmethod
     def get_by_id(cls, id: str) -> Model:
         return CategorySelector.get_by_id(id)
+    
+    @classmethod
+    def update(cls, id: str, **kwargs) -> Model:
+        return CategorySelector.update(id, **kwargs)

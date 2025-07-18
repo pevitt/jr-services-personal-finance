@@ -49,6 +49,12 @@ class ErrorCode(Enum):
         status=status.HTTP_400_BAD_REQUEST,
     )
 
+    C03 = dict(
+        code="C03",
+        message="Category not found",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
     @classmethod
     def get_by_message(cls, message: str):
         try:
