@@ -55,6 +55,36 @@ class ErrorCode(Enum):
         status=status.HTTP_400_BAD_REQUEST,
     )
 
+    C04 = dict(
+        code="C04",
+        message="Category and type already exists",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+    B00 = dict(
+        code="B00",
+        message="Error while creating balance",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+    B01 = dict(
+        code="B01",
+        message="Balance not found",
+        status=status.HTTP_404_NOT_FOUND,
+    )
+
+    B02 = dict(
+        code="B02",
+        message="Error while getting balances",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+    B03 = dict(
+        code="B03",
+        message="Error while updating balance",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
     @classmethod
     def get_by_message(cls, message: str):
         try:

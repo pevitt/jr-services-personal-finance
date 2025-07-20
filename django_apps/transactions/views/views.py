@@ -17,6 +17,18 @@ class CategoryView(ResponseMixin, APIView):
         class Meta:
             model = Category
             fields = ['name', 'type', 'description']
+        
+        def validate(self, attrs):
+            # Verificar si ya existe una categoría con el mismo nombre y tipo
+            name = attrs.get('name')
+            category_type = attrs.get('type')
+            print(name, category_type)
+            if CategoryService.get_by_filters(name=name, type=category_type).first():
+                raise FinanceAPIException(
+                    error_code=ErrorCode.C04.value
+                )
+            
+            return attrs
     
     class CategoryOutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -27,7 +39,6 @@ class CategoryView(ResponseMixin, APIView):
         in_serializer = self.CategoryInputSerializer(data=request.data)
         in_serializer.is_valid(raise_exception=True)
         data = CategoryService.create(**in_serializer.validated_data)
-        print(data)
         try:
             out_serializer = self.CategoryOutputSerializer(data)
         except Exception as e:

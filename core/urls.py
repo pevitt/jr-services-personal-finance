@@ -18,9 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django_apps.transactions.urls import urlpatterns as transactions_urls
+from django_apps.finance.urls import urlpatterns as finance_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/auth/", include("django_apps.authentication.urls")),
     path("api/v1/transactions/", include(transactions_urls)),
+    path("api/v1/finance/", include(finance_urls)),
 ]

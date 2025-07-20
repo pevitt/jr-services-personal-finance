@@ -31,3 +31,7 @@ class CategorySelector(BaseSelector):
             setattr(category, key, value)
         category.save()
         return category
+    
+    @classmethod
+    def exists(cls, **filters) -> bool:
+        return cls.model.objects.filter(**filters).exists()

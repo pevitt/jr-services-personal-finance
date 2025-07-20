@@ -31,6 +31,18 @@ class SignUpView(APIView):
                 if CustomUser.objects.filter(email=value).exists():
                     raise FinanceAPIException(ErrorCode.U02)
                 return value
+    class SignUpOutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = CustomUser
+            fields = [
+                "id",
+                "first_name",
+                "last_name",
+                "email",
+                "nickname",
+                "document_type",
+                "document_number"
+            ]
 
     def post(self, request):
         in_serializer = self.SignUpSerializer(data=request.data)
@@ -39,5 +51,7 @@ class SignUpView(APIView):
             user = auth_services.create_user(**in_serializer.validated_data)
         except:
             raise FinanceAPIException(ErrorCode.U02)
+        
+        out_serializer = self.SignUpOutputSerializer(user)
 
-        return Response(in_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(out_serializer.data, status=status.HTTP_201_CREATED)

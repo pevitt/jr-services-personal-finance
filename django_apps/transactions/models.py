@@ -28,6 +28,14 @@ class Category(BaseModelUUID):
         verbose_name_plural = 'Categories'
         ordering = ['name']
         unique_together = ('name', 'type')
+        # Alternativa: Personalizar mensaje de error directamente en el modelo
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=['name', 'type'],
+        #         name='unique_category_name_type',
+        #         violation_error_message='Ya existe una categoría con este nombre y tipo.'
+        #     )
+        # ]
 
 
 class Transaction(BaseModelUUID):

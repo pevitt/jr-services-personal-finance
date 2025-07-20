@@ -8,6 +8,7 @@ isort==5.13.2
 celery==5.3.6
 redis==5.0.4
 pdbpp==0.10.3
+ipdb==0.13.13
 fancycompleter==0.9.1
 djangorestframework-simplejwt==5.3.1
 djangorestframework-api-key==3.1.0

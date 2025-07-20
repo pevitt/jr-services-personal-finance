@@ -8,7 +8,9 @@ class CategoryService(BaseService):
 
     @classmethod
     def create(cls, **kwargs) -> Model:
-
+        print(kwargs.get('name'))
+        print("--------------------------------")
+        print(kwargs)
         if CategorySelector.exists(name=kwargs.get('name')):
             raise FinanceAPIException(
                 error_code=ErrorCode.C01.value
