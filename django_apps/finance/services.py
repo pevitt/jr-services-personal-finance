@@ -27,6 +27,11 @@ class BudgetService(BaseService):
 
     @classmethod
     def create(cls, **kwargs) -> Model:
+        if BudgetSelector.exists(user=kwargs.get('user')):
+            raise FinanceAPIException(
+                error_code=ErrorCode.B01.value
+            )
+        
         budget = BudgetSelector.create(**kwargs)
         return budget
     

@@ -7,6 +7,8 @@ from utils.mixins import ResponseMixin
 from rest_framework import serializers
 from django_apps.transactions.models import Category, Transaction
 from django_apps.transactions.services import CategoryService
+from django_apps.transactions.serializers import TransactionInputSerializer, TransactionOutputSerializer, TransactionUpdateSerializer
+from django_apps.transactions.services import TransactionService
 
 # Create your views here.
 class CategoryView(ResponseMixin, APIView):
@@ -134,3 +136,76 @@ class CategoryDetailView(ResponseMixin, APIView):
             data=out_serializer.data, 
             status=status.HTTP_200_OK
         )
+
+class TransactionUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['category', 'amount', 'description']
+        extra_kwargs = {
+            'category': {'required': False},
+            'amount': {'required': False},
+            'description': {'required': False},
+        }
+
+class TransactionView(ResponseMixin, APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        in_serializer = TransactionInputSerializer(data=request.data)
+        in_serializer.is_valid(raise_exception=True)
+        try:
+            transaction = TransactionService.create(**in_serializer.validated_data)
+            out_serializer = TransactionOutputSerializer(transaction)
+        except Exception:
+            raise FinanceAPIException(error_code=ErrorCode.B00.value)
+        return Response(out_serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request):
+        try:
+            transactions = TransactionService.get_by_filters()
+            out_serializer = TransactionOutputSerializer(transactions, many=True)
+        except Exception:
+            raise FinanceAPIException(error_code=ErrorCode.B02.value)
+        return Response(out_serializer.data, status=status.HTTP_200_OK)
+
+class TransactionDetailView(ResponseMixin, APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, transaction_id):
+        transaction = TransactionService.get_by_id(transaction_id)
+        if not transaction or not transaction.is_active:
+            raise FinanceAPIException(error_code=ErrorCode.B01.value)
+        try:
+            out_serializer = TransactionOutputSerializer(transaction)
+        except Exception:
+            raise FinanceAPIException(error_code=ErrorCode.B02.value)
+        return Response(out_serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, transaction_id):
+        transaction = TransactionService.get_by_id(transaction_id)
+        if not transaction or not transaction.is_active:
+            raise FinanceAPIException(error_code=ErrorCode.B01.value)
+        update_serializer = TransactionUpdateSerializer(
+            instance=transaction,
+            data=request.data,
+            partial=True
+        )
+        update_serializer.is_valid(raise_exception=True)
+        try:
+            updated = TransactionService.update(transaction_id, **update_serializer.validated_data)
+            out_serializer = TransactionOutputSerializer(updated)
+        except Exception:
+            raise FinanceAPIException(error_code=ErrorCode.B03.value)
+        return Response(out_serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, transaction_id):
+        transaction = TransactionService.get_by_id(transaction_id)
+        if not transaction or not transaction.is_active:
+            raise FinanceAPIException(error_code=ErrorCode.B01.value)
+        try:
+            transaction.delete()  # Soft delete
+        except Exception:
+            raise FinanceAPIException(error_code=ErrorCode.B03.value)
+        return Response({"message": "Transaction deleted (soft delete)"}, status=status.HTTP_204_NO_CONTENT)

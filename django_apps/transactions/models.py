@@ -49,11 +49,13 @@ class Transaction(BaseModelUUID):
         on_delete=models.CASCADE
     )
     amount = models.DecimalField(
-        max_digits=10, 
+        max_digits=18, 
         decimal_places=2,
         default=0
     )
     description = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    external_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
 
     def __str__(self):
         return f"{self.balance.user.username}'s Transaction"
