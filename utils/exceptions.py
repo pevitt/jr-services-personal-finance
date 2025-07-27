@@ -85,6 +85,19 @@ class ErrorCode(Enum):
         status=status.HTTP_400_BAD_REQUEST,
     )
 
+    T00 = dict(
+        code="T00",
+        message="Error while creating transaction",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+    
+    T01 = dict(
+        code="T01",
+        message="Transaction already exists",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+    
+
     @classmethod
     def get_by_message(cls, message: str):
         try:

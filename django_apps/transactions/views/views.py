@@ -137,16 +137,6 @@ class CategoryDetailView(ResponseMixin, APIView):
             status=status.HTTP_200_OK
         )
 
-class TransactionUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Transaction
-        fields = ['category', 'amount', 'description']
-        extra_kwargs = {
-            'category': {'required': False},
-            'amount': {'required': False},
-            'description': {'required': False},
-        }
-
 class TransactionView(ResponseMixin, APIView):
     authentication_classes = []
     permission_classes = []

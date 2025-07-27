@@ -16,7 +16,7 @@ class Balance(BaseModelUUID):
     )
     
     def __str__(self):
-        return f"{self.user.username}'s Balance"
+        return f"{self.user.nickname}'s Balance"
     
     class Meta:
         verbose_name = 'Balance'
@@ -50,7 +50,7 @@ class Budget(BaseModelUUID):
     )
 
     def __str__(self):
-        return f"{self.user.username}'s Budget"
+        return f"{self.user.nickname}'s Budget"
     
     class Meta:
         verbose_name = 'Budget'
