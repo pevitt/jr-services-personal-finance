@@ -16,18 +16,19 @@ class ResponseMixin:
             response_time = round((time.time() - self.start_time) * 1000, 2)  # en milisegundos
             
             if response.status_code < 400:
-                code = "SUCCESS"
+                code = "Success"
                 message = "Request processed successfully"
             else:
-                code = "ERROR"
+                code = "Error"
                 message = self._get_error_message(response.status_code)
 
             response.data = {
-                'timestamp': datetime.now().isoformat(),
-                'response_time_ms': response_time,
-                'code': code,
+                'status_code': response.status_code,
+                'status': code,
                 'message': message,
-                'response_data': original_data
+                'processing_time': response_time,
+                'response_data': original_data,
+                'system_timestamp': datetime.now().isoformat()
             }
 
         return response

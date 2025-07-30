@@ -9,6 +9,7 @@ from django_apps.transactions.models import Category, Transaction
 from django_apps.transactions.services import CategoryService
 from django_apps.transactions.serializers import TransactionInputSerializer, TransactionOutputSerializer, TransactionUpdateSerializer
 from django_apps.transactions.services import TransactionService
+from utils.pagination import CustomPagination
 
 # Create your views here.
 class CategoryView(ResponseMixin, APIView):
@@ -138,6 +139,7 @@ class CategoryDetailView(ResponseMixin, APIView):
         )
 
 class TransactionView(ResponseMixin, APIView):
+    pagination_class = CustomPagination
     authentication_classes = []
     permission_classes = []
 
@@ -154,10 +156,12 @@ class TransactionView(ResponseMixin, APIView):
     def get(self, request):
         try:
             transactions = TransactionService.get_by_filters()
-            out_serializer = TransactionOutputSerializer(transactions, many=True)
+            paginator = self.pagination_class()
+            paginated_data = paginator.paginate_queryset(transactions, request)
+            out_serializer = TransactionOutputSerializer(paginated_data, many=True)
         except Exception:
             raise FinanceAPIException(error_code=ErrorCode.B02.value)
-        return Response(out_serializer.data, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response(out_serializer.data)
 
 class TransactionDetailView(ResponseMixin, APIView):
     authentication_classes = []
@@ -193,7 +197,7 @@ class TransactionDetailView(ResponseMixin, APIView):
     def delete(self, request, transaction_id):
         transaction = TransactionService.get_by_id(transaction_id)
         if not transaction or not transaction.is_active:
-            raise FinanceAPIException(error_code=ErrorCode.B01.value)
+            raise FinanceAPIException(error_code=ErrorCode.T02.value)
         try:
             transaction.delete()  # Soft delete
         except Exception:

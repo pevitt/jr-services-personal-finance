@@ -85,6 +85,12 @@ class ErrorCode(Enum):
         status=status.HTTP_400_BAD_REQUEST,
     )
 
+    B04 = dict(
+        code="B04",
+        message="Invalid UUID format",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
     T00 = dict(
         code="T00",
         message="Error while creating transaction",
@@ -95,6 +101,12 @@ class ErrorCode(Enum):
         code="T01",
         message="Transaction already exists",
         status=status.HTTP_400_BAD_REQUEST,
+    )
+
+    T02 = dict(
+        code="T02",
+        message="Transaction not found",
+        status=status.HTTP_404_NOT_FOUND,
     )
     
 
@@ -121,7 +133,7 @@ class FinanceAPIException(APIException):
     def __init__(self, error_code: ErrorCode, message: str = None, code: str = None):
         error = error_code
         if message:
-            error = ErrorCode.get_by_message(message)
+            error["message"] = message
 
         data = error
         self.status_code = data["status"]

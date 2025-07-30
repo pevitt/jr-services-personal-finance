@@ -15,5 +15,5 @@ urlpatterns = [
     
     # Budget URLs
     path('budgets/', BudgetView.as_view(), name='budget-list'),
-    path('budgets/<str:budget_id>/', BudgetDetailView.as_view(), name='budget-detail'),
+    path('budgets/<uuid:budget_id>/', BudgetDetailView.as_view(), name='budget-detail'),
 ] 

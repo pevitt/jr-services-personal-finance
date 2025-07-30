@@ -7,6 +7,8 @@ from utils.mixins import ResponseMixin
 from rest_framework import serializers
 from django_apps.finance.models import Balance, Budget
 from django_apps.finance.services import BalanceService, BudgetService
+import uuid
+from utils.decorators import validate_uuid_param
 
 # Create your views here.
 class BalanceView(ResponseMixin, APIView):
@@ -62,8 +64,8 @@ class BalanceDetailView(ResponseMixin, APIView):
                 'available_balance': {'required': False}
             }
 
+    @validate_uuid_param('balance_id')
     def get(self, request, balance_id):
-        
         balance = BalanceService.get_by_id(balance_id)
         if not balance:
             raise FinanceAPIException(
