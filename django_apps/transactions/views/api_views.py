@@ -1,29 +1,27 @@
-from django_apps.finance.views.views import (
-    BalanceView, 
-    BalanceDetailView, 
-    BudgetView, 
-    BudgetDetailView
+from django_apps.transactions.views.views import (
+    CategoryView,
+    CategoryDetailView,
+    TransactionView,
+    TransactionDetailView
 )
 from utils.api_key_auth import HasValidAPIKey
-from rest_framework.permissions import IsAuthenticated
 
-
-class BalanceAPIView(BalanceView):
+class CategoryAPIView(CategoryView):
     authentication_classes = []
     permission_classes = [HasValidAPIKey]
     pass
 
-class BalanceDetailAPIView(BalanceDetailView):
+class CategoryDetailAPIView(CategoryDetailView):
     authentication_classes = []
     permission_classes = [HasValidAPIKey]
     pass
 
-class BudgetAPIView(BudgetView):
+class TransactionAPIView(TransactionView): 
     authentication_classes = []
     permission_classes = [HasValidAPIKey]
     pass
 
-class BudgetDetailAPIView(BudgetDetailView):
+class TransactionDetailAPIView(TransactionDetailView):
     authentication_classes = []
     permission_classes = [HasValidAPIKey]
     pass

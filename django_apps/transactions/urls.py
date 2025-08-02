@@ -1,30 +1,60 @@
 from django.urls import include, path
-from django_apps.transactions.views.views import (
-    CategoryView, 
-    CategoryDetailView, 
-    TransactionView, 
-    TransactionDetailView
+from django_apps.transactions.views.api_views import (
+    CategoryAPIView,
+    CategoryDetailAPIView,
+    TransactionAPIView,
+    TransactionDetailAPIView
+)
+
+from django_apps.transactions.views.jwt_views import (
+    CategoryJWTView,
+    CategoryDetailJWTView,
+    TransactionJWTView,
+    TransactionDetailJWTView
 )
 
 urlpatterns = [
     path(
         'categories/', 
-        CategoryView.as_view(), 
+        CategoryAPIView.as_view(), 
         name='category'
     ),
     path(
         'categories/<str:category_id>/',
-        CategoryDetailView.as_view(),
+        CategoryDetailAPIView.as_view(),
         name='category-detail'
     ),
     path(
         'transactions/',
-        TransactionView.as_view(),
+        TransactionAPIView.as_view(),
         name='transaction'
     ),
     path(
         'transactions/<str:transaction_id>/',
-        TransactionDetailView.as_view(),
+        TransactionDetailAPIView.as_view(),
+        name='transaction-detail'
+    ),
+]
+
+urlpatterns_jwt = [
+    path(
+        'categories/',
+        CategoryJWTView.as_view(),
+        name='category'
+    ),
+    path(
+        'categories/<str:category_id>/',
+        CategoryDetailJWTView.as_view(),
+        name='category-detail'
+    ),
+    path(
+        'transactions/',
+        TransactionJWTView.as_view(),
+        name='transaction'
+    ),
+    path(
+        'transactions/<str:transaction_id>/',
+        TransactionDetailJWTView.as_view(),
         name='transaction-detail'
     ),
 ]

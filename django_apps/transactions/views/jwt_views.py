@@ -1,28 +1,28 @@
-from django_apps.finance.views.views import (
-    BalanceView, 
-    BalanceDetailView, 
-    BudgetView, 
-    BudgetDetailView
+from django_apps.transactions.views.views import (
+    CategoryView,
+    CategoryDetailView,
+    TransactionView,
+    TransactionDetailView
 )
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-class BalanceJWTView(BalanceView):
+class CategoryJWTView(CategoryView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pass
 
-class BalanceDetailJWTView(BalanceDetailView):
+class CategoryDetailJWTView(CategoryDetailView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pass
 
-class BudgetJWTView(BudgetView):
+class TransactionJWTView(TransactionView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pass
 
-class BudgetDetailJWTView(BudgetDetailView):
+class TransactionDetailJWTView(TransactionDetailView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     pass

@@ -12,6 +12,7 @@ from utils.decorators import validate_uuid_param
 
 # Create your views here.
 class BalanceView(ResponseMixin, APIView):
+    http_method_names = ['post']
     authentication_classes = []  # Sin autenticación por ahora
     permission_classes = [] 
 
@@ -46,6 +47,7 @@ class BalanceView(ResponseMixin, APIView):
     
     
 class BalanceDetailView(ResponseMixin, APIView):
+    http_method_names = ['get', 'put']
     authentication_classes = []  # Sin autenticación por ahora
     permission_classes = [] 
 
@@ -82,6 +84,7 @@ class BalanceDetailView(ResponseMixin, APIView):
             status=status.HTTP_200_OK
         )
     
+    @validate_uuid_param('balance_id')
     def put(self, request, balance_id):
         
         balance = BalanceService.get_by_id(balance_id)
@@ -109,6 +112,7 @@ class BalanceDetailView(ResponseMixin, APIView):
 
 
 class BudgetView(ResponseMixin, APIView):
+    http_method_names = ['post']
     authentication_classes = []  # Sin autenticación por ahora
     permission_classes = [] 
 
@@ -142,6 +146,7 @@ class BudgetView(ResponseMixin, APIView):
     
     
 class BudgetDetailView(ResponseMixin, APIView):
+    http_method_names = ['get', 'put']
     authentication_classes = []  # Sin autenticación por ahora
     permission_classes = [] 
 
@@ -162,6 +167,7 @@ class BudgetDetailView(ResponseMixin, APIView):
                 'actual_savings': {'required': False}
             }
 
+    @validate_uuid_param('budget_id')
     def get(self, request, budget_id):
         budget = BudgetService.get_by_id(budget_id)
         if not budget:
@@ -179,6 +185,7 @@ class BudgetDetailView(ResponseMixin, APIView):
             status=status.HTTP_200_OK
         )
     
+    @validate_uuid_param('budget_id')
     def put(self, request, budget_id):
         budget = BudgetService.get_by_id(budget_id)
         if not budget:

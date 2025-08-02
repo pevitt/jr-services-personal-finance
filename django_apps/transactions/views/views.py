@@ -10,9 +10,11 @@ from django_apps.transactions.services import CategoryService
 from django_apps.transactions.serializers import TransactionInputSerializer, TransactionOutputSerializer, TransactionUpdateSerializer
 from django_apps.transactions.services import TransactionService
 from utils.pagination import CustomPagination
+from utils.decorators import validate_uuid_param
 
 # Create your views here.
 class CategoryView(ResponseMixin, APIView):
+    http_method_names = ['post', 'get']
     authentication_classes = []  # Sin autenticación
     permission_classes = [] 
 
@@ -79,6 +81,7 @@ class CategoryView(ResponseMixin, APIView):
         )
     
 class CategoryDetailView(ResponseMixin, APIView):
+    http_method_names = ['get', 'put']
     authentication_classes = []  # Sin autenticación
     permission_classes = [] 
 
@@ -97,6 +100,7 @@ class CategoryDetailView(ResponseMixin, APIView):
                 'description': {'required': False}
             }
 
+    @validate_uuid_param('category_id')
     def get(self, request, category_id):
         category = CategoryService.get_by_id(category_id)
         if not category:
@@ -114,6 +118,7 @@ class CategoryDetailView(ResponseMixin, APIView):
             status=status.HTTP_200_OK
         )
     
+    @validate_uuid_param('category_id')
     def put(self, request, category_id):
         category = CategoryService.get_by_id(category_id)
         if not category:
@@ -139,6 +144,7 @@ class CategoryDetailView(ResponseMixin, APIView):
         )
 
 class TransactionView(ResponseMixin, APIView):
+    http_method_names = ['post', 'get']
     pagination_class = CustomPagination
     authentication_classes = []
     permission_classes = []
@@ -164,9 +170,11 @@ class TransactionView(ResponseMixin, APIView):
         return paginator.get_paginated_response(out_serializer.data)
 
 class TransactionDetailView(ResponseMixin, APIView):
+    http_method_names = ['get', 'put']
     authentication_classes = []
     permission_classes = []
 
+    @validate_uuid_param('transaction_id')
     def get(self, request, transaction_id):
         transaction = TransactionService.get_by_id(transaction_id)
         if not transaction or not transaction.is_active:
@@ -177,6 +185,7 @@ class TransactionDetailView(ResponseMixin, APIView):
             raise FinanceAPIException(error_code=ErrorCode.B02.value)
         return Response(out_serializer.data, status=status.HTTP_200_OK)
 
+    @validate_uuid_param('transaction_id')
     def put(self, request, transaction_id):
         transaction = TransactionService.get_by_id(transaction_id)
         if not transaction or not transaction.is_active:
@@ -194,6 +203,7 @@ class TransactionDetailView(ResponseMixin, APIView):
             raise FinanceAPIException(error_code=ErrorCode.B03.value)
         return Response(out_serializer.data, status=status.HTTP_200_OK)
 
+    @validate_uuid_param('balance_id')
     def delete(self, request, transaction_id):
         transaction = TransactionService.get_by_id(transaction_id)
         if not transaction or not transaction.is_active:

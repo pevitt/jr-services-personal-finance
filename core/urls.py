@@ -18,11 +18,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django_apps.transactions.urls import urlpatterns as transactions_urls
+from django_apps.transactions.urls import urlpatterns_jwt as transactions_urls_jwt
 from django_apps.finance.urls import urlpatterns as finance_urls
+from django_apps.finance.urls import urlpatterns_jwt as finance_urls_jwt
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/auth/", include("django_apps.authentication.urls")),
     path("api/v1/transactions/", include(transactions_urls)),
+    path("api/jwt/v1/transactions/", include(transactions_urls_jwt)),
     path("api/v1/finance/", include(finance_urls)),
+    path("api/jwt/v1/finance/", include(finance_urls_jwt)),
 ]
