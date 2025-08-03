@@ -24,10 +24,8 @@ class CategoryView(ResponseMixin, APIView):
             fields = ['name', 'type', 'description']
         
         def validate(self, attrs):
-            # Verificar si ya existe una categoría con el mismo nombre y tipo
             name = attrs.get('name')
             category_type = attrs.get('type')
-            print(name, category_type)
             if CategoryService.get_by_filters(name=name, type=category_type).first():
                 raise FinanceAPIException(
                     error_code=ErrorCode.C04.value
@@ -155,13 +153,28 @@ class TransactionView(ResponseMixin, APIView):
         try:
             transaction = TransactionService.create(**in_serializer.validated_data)
             out_serializer = TransactionOutputSerializer(transaction)
-        except Exception:
-            raise FinanceAPIException(error_code=ErrorCode.B00.value)
+        except FinanceAPIException as e:
+            raise e
+        except Exception as e:  
+            raise FinanceAPIException(error_code=ErrorCode.T00.value)
         return Response(out_serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request):
         try:
-            transactions = TransactionService.get_by_filters()
+            balance_id = request.query_params.get('balance_id')
+            description = request.query_params.get('description')
+            category_id = request.query_params.get('category_id')
+            filters = {}
+            if balance_id:
+                filters['balance_id'] = balance_id
+            if description:
+                filters['description'] = description
+            if category_id:
+                filters['category_id'] = category_id
+            
+            print(filters)
+
+            transactions = TransactionService.get_by_filters(**filters)
             paginator = self.pagination_class()
             paginated_data = paginator.paginate_queryset(transactions, request)
             out_serializer = TransactionOutputSerializer(paginated_data, many=True)

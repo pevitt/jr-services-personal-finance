@@ -108,6 +108,12 @@ class ErrorCode(Enum):
         message="Transaction not found",
         status=status.HTTP_404_NOT_FOUND,
     )
+
+    T03 = dict(
+        code="T03",
+        message="Invalid transaction amount",
+        status=status.HTTP_400_BAD_REQUEST,
+    )
     
 
     @classmethod

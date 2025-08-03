@@ -5,6 +5,7 @@ from django_apps.transactions.selectors import (
 )
 from utils.services.base_service import BaseService
 from utils.exceptions import FinanceAPIException, ErrorCode
+from django_apps.transactions.validators.transactions.validator_chain import create_transaction_validation_chain
 from typing import List
 from django.db import transaction
 
@@ -37,9 +38,10 @@ class TransactionService(BaseService):
 
     @classmethod
     def create(cls, **kwargs):
+        # Ejecutar la cadena de validación
+        validation_chain = create_transaction_validation_chain()
+        validation_chain.validate(kwargs)
 
-        if TransactionSelector.exists(external_id=kwargs.get("external_id")):
-            raise FinanceAPIException(error_code=ErrorCode.T01.value)
         with transaction.atomic():
             new_transaction = TransactionSelector.create(**kwargs)
             balance = new_transaction.balance

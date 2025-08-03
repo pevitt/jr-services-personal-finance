@@ -5,6 +5,7 @@ from django_apps.transactions.views.views import (
     TransactionDetailView
 )
 from utils.api_key_auth import HasValidAPIKey
+from rest_framework.permissions import IsAuthenticated
 
 class CategoryAPIView(CategoryView):
     authentication_classes = []
