@@ -8,6 +8,7 @@ from utils.exceptions import FinanceAPIException, ErrorCode
 from django_apps.transactions.validators.transactions.validator_chain import create_transaction_validation_chain
 from typing import List
 from django.db import transaction
+from django_apps.finance.helpers import update_budget_actual_savings
 
 
 class CategoryService(BaseService):
@@ -55,6 +56,8 @@ class TransactionService(BaseService):
 
             balance.available_balance += amount
             balance.save()
+
+            update_budget_actual_savings(balance.user, balance.available_balance)
 
             return new_transaction
 

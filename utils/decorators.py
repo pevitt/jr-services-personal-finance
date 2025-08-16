@@ -16,7 +16,7 @@ def validate_uuid_param(param_name):
         @wraps(func)
         def wrapper(self, request, *args, **kwargs):
             # Obtener el valor del parámetro
-            param_value = kwargs.get(param_name)
+            param_value = str(kwargs.get(param_name))
             
             if param_value:
                 try:

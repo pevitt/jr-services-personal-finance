@@ -7,8 +7,9 @@ from utils.mixins import ResponseMixin
 from rest_framework import serializers
 from django_apps.finance.models import Balance, Budget
 from django_apps.finance.services import BalanceService, BudgetService
-import uuid
 from utils.decorators import validate_uuid_param
+from django_apps.finance.helpers import update_budget_actual_savings
+from decimal import Decimal
 
 # Create your views here.
 class BalanceView(ResponseMixin, APIView):
@@ -101,6 +102,7 @@ class BalanceDetailView(ResponseMixin, APIView):
         data = BalanceService.update(balance_id, **update_serializer.validated_data)
         try:
             out_serializer = self.BalanceDetailOutputSerializer(data)
+            update_budget_actual_savings(balance.user, balance.available_balance)
         except Exception as e:
             raise FinanceAPIException(
                 error_code=ErrorCode.B03.value
@@ -152,10 +154,12 @@ class BudgetDetailView(ResponseMixin, APIView):
 
     class BudgetDetailOutputSerializer(serializers.ModelSerializer):
         user = serializers.StringRelatedField()
+        strategy_used = serializers.CharField(required=False)
+        strategy_description = serializers.CharField(required=False)
         
         class Meta:
             model = Budget
-            fields = ['id', 'user', 'monthly_income', 'monthly_expenses', 'suggested_savings', 'actual_savings', 'created_at', 'updated_at']
+            fields = ['id', 'user', 'monthly_income', 'monthly_expenses', 'suggested_savings', 'actual_savings', 'created_at', 'updated_at', 'strategy_used', 'strategy_description']
 
     class BudgetUpdateInputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -169,17 +173,26 @@ class BudgetDetailView(ResponseMixin, APIView):
 
     @validate_uuid_param('budget_id')
     def get(self, request, budget_id):
-        budget = BudgetService.get_by_id(budget_id)
-        if not budget:
+         # Procesar parámetro de estrategia si se proporciona
+        strategy_param = request.query_params.get('strategy', 'balanced')
+        budget_data = BudgetService.get_by_id(budget_id, strategy_param)
+        if not budget_data:
             raise FinanceAPIException(
                 error_code=ErrorCode.B01.value
             )
+        
         try:
-            out_serializer = self.BudgetDetailOutputSerializer(budget)
+            out_serializer = self.BudgetDetailOutputSerializer(budget_data)
+        except ValueError as e:
+            # Error en parámetros de estrategia
+            raise FinanceAPIException(
+                error_code=ErrorCode.B00.value
+            )
         except Exception as e:
             raise FinanceAPIException(
                 error_code=ErrorCode.B02.value
             )
+        
         return Response(
             data=out_serializer.data, 
             status=status.HTTP_200_OK
